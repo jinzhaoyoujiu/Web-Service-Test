@@ -28,13 +28,24 @@ namespace WindowsFormsApp1
             if (textBox1.TextLength > 0)
             {
                 var client = new ServiceReference1.WebService1SoapClient();
-                textBox2.Text= client.RevertString(textBox1.Text);
+                client.RevertStringCompleted += completed;
+                client.RevertStringAsync(textBox1.Text);
             }
             else {
                 MessageBox.Show("不能为空");
             }
         }
-
+        private void completed(object s,ServiceReference1.RevertStringCompletedEventArgs e)
+        {
+            if (e.Error == null)
+            {
+                textBox2.Text =e.Result;
+                
+            }
+            else {
+                MessageBox.Show(e.Error.Message);
+            }
+        }
         private void label1_Click(object sender, EventArgs e)
         {
 

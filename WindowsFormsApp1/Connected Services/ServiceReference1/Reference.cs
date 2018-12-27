@@ -19,8 +19,10 @@ namespace WindowsFormsApp1.ServiceReference1 {
         [System.ServiceModel.OperationContractAttribute(Action="http://hahhah/RevertString", ReplyAction="*")]
         WindowsFormsApp1.ServiceReference1.RevertStringResponse RevertString(WindowsFormsApp1.ServiceReference1.RevertStringRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://hahhah/RevertString", ReplyAction="*")]
-        System.Threading.Tasks.Task<WindowsFormsApp1.ServiceReference1.RevertStringResponse> RevertStringAsync(WindowsFormsApp1.ServiceReference1.RevertStringRequest request);
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://hahhah/RevertString", ReplyAction="*")]
+        System.IAsyncResult BeginRevertString(WindowsFormsApp1.ServiceReference1.RevertStringRequest request, System.AsyncCallback callback, object asyncState);
+        
+        WindowsFormsApp1.ServiceReference1.RevertStringResponse EndRevertString(System.IAsyncResult result);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -97,7 +99,32 @@ namespace WindowsFormsApp1.ServiceReference1 {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class RevertStringCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public RevertStringCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public string Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class WebService1SoapClient : System.ServiceModel.ClientBase<WindowsFormsApp1.ServiceReference1.WebService1Soap>, WindowsFormsApp1.ServiceReference1.WebService1Soap {
+        
+        private BeginOperationDelegate onBeginRevertStringDelegate;
+        
+        private EndOperationDelegate onEndRevertStringDelegate;
+        
+        private System.Threading.SendOrPostCallback onRevertStringCompletedDelegate;
         
         public WebService1SoapClient() {
         }
@@ -118,6 +145,8 @@ namespace WindowsFormsApp1.ServiceReference1 {
                 base(binding, remoteAddress) {
         }
         
+        public event System.EventHandler<RevertStringCompletedEventArgs> RevertStringCompleted;
+        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         WindowsFormsApp1.ServiceReference1.RevertStringResponse WindowsFormsApp1.ServiceReference1.WebService1Soap.RevertString(WindowsFormsApp1.ServiceReference1.RevertStringRequest request) {
             return base.Channel.RevertString(request);
@@ -132,15 +161,63 @@ namespace WindowsFormsApp1.ServiceReference1 {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<WindowsFormsApp1.ServiceReference1.RevertStringResponse> WindowsFormsApp1.ServiceReference1.WebService1Soap.RevertStringAsync(WindowsFormsApp1.ServiceReference1.RevertStringRequest request) {
-            return base.Channel.RevertStringAsync(request);
+        System.IAsyncResult WindowsFormsApp1.ServiceReference1.WebService1Soap.BeginRevertString(WindowsFormsApp1.ServiceReference1.RevertStringRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginRevertString(request, callback, asyncState);
         }
         
-        public System.Threading.Tasks.Task<WindowsFormsApp1.ServiceReference1.RevertStringResponse> RevertStringAsync(string testStr) {
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginRevertString(string testStr, System.AsyncCallback callback, object asyncState) {
             WindowsFormsApp1.ServiceReference1.RevertStringRequest inValue = new WindowsFormsApp1.ServiceReference1.RevertStringRequest();
             inValue.Body = new WindowsFormsApp1.ServiceReference1.RevertStringRequestBody();
             inValue.Body.testStr = testStr;
-            return ((WindowsFormsApp1.ServiceReference1.WebService1Soap)(this)).RevertStringAsync(inValue);
+            return ((WindowsFormsApp1.ServiceReference1.WebService1Soap)(this)).BeginRevertString(inValue, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        WindowsFormsApp1.ServiceReference1.RevertStringResponse WindowsFormsApp1.ServiceReference1.WebService1Soap.EndRevertString(System.IAsyncResult result) {
+            return base.Channel.EndRevertString(result);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public string EndRevertString(System.IAsyncResult result) {
+            WindowsFormsApp1.ServiceReference1.RevertStringResponse retVal = ((WindowsFormsApp1.ServiceReference1.WebService1Soap)(this)).EndRevertString(result);
+            return retVal.Body.RevertStringResult;
+        }
+        
+        private System.IAsyncResult OnBeginRevertString(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            string testStr = ((string)(inValues[0]));
+            return this.BeginRevertString(testStr, callback, asyncState);
+        }
+        
+        private object[] OnEndRevertString(System.IAsyncResult result) {
+            string retVal = this.EndRevertString(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnRevertStringCompleted(object state) {
+            if ((this.RevertStringCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.RevertStringCompleted(this, new RevertStringCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void RevertStringAsync(string testStr) {
+            this.RevertStringAsync(testStr, null);
+        }
+        
+        public void RevertStringAsync(string testStr, object userState) {
+            if ((this.onBeginRevertStringDelegate == null)) {
+                this.onBeginRevertStringDelegate = new BeginOperationDelegate(this.OnBeginRevertString);
+            }
+            if ((this.onEndRevertStringDelegate == null)) {
+                this.onEndRevertStringDelegate = new EndOperationDelegate(this.OnEndRevertString);
+            }
+            if ((this.onRevertStringCompletedDelegate == null)) {
+                this.onRevertStringCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnRevertStringCompleted);
+            }
+            base.InvokeAsync(this.onBeginRevertStringDelegate, new object[] {
+                        testStr}, this.onEndRevertStringDelegate, this.onRevertStringCompletedDelegate, userState);
         }
     }
 }
